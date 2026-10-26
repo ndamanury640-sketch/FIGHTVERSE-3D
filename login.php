@@ -1,0 +1,10 @@
+<?php
+require_once __DIR__.'/includes/bootstrap.php'; require_once __DIR__.'/includes/vsart.php';
+if(current_user()){header('Location: dashboard.php');exit;}
+$error='';
+if($_SERVER['REQUEST_METHOD']==='POST'){csrf_check();$identity=trim($_POST['identity']??'');$password=$_POST['password']??'';
+$stmt=$pdo->prepare('SELECT id,username,email,password_hash,role,status FROM users WHERE username=? OR email=? LIMIT 1');$stmt->execute([$identity,$identity]);$u=$stmt->fetch();
+if($u && password_verify($password,$u['password_hash']) && $u['status']==='active'){session_regenerate_id(true);$_SESSION['user']=['id'=>(int)$u['id'],'username'=>$u['username'],'email'=>$u['email'],'role'=>$u['role']];$pdo->prepare('UPDATE users SET last_login=NOW() WHERE id=?')->execute([$u['id']]);header('Location: dashboard.php');exit;} $error='Username/email atau password tidak sesuai.';}
+$pageTitle='Login';include __DIR__.'/includes/header.php'; ?>
+<section class="auth-wrap"><div class="auth-side"><div class="eyebrow">PLAYER ACCESS / 01</div><h1>YOUR NEXT<br><span>ROUND BEGINS.</span></h1><p>Masuk kembali ke arena dan lanjutkan perjalananmu.</p><?php vs_art('shadow-reaper','storm-ronin','auth'); ?></div><div class="auth-panel"><div class="eyebrow">WELCOME BACK</div><h2>LOGIN TO PLAY</h2><p class="muted">Masukkan akun FIGHTVERSE kamu.</p><?php if($error): ?><div class="alert"><?= e($error) ?></div><?php endif; ?><form method="post" class="form-stack"><input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>"><label>Username atau email<input name="identity" autocomplete="username" required maxlength="190" placeholder="fighter01"></label><label>Password<input type="password" name="password" autocomplete="current-password" required placeholder="••••••••"></label><button class="button primary full">LOGIN TO ARENA ↗</button></form><p class="form-foot">Belum punya akun? <a href="register.php">Buat akun</a></p></div></section>
+<?php include __DIR__.'/includes/footer.php'; ?>

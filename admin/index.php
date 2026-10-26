@@ -1,0 +1,6 @@
+<?php
+require_once __DIR__.'/../includes/bootstrap.php';require_admin();
+$users=(int)$pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();$matches=(int)$pdo->query('SELECT COUNT(*) FROM matches')->fetchColumn();$chars=(int)$pdo->query('SELECT COUNT(*) FROM characters WHERE is_active=1')->fetchColumn();
+$pageTitle='Admin Control';include __DIR__.'/../includes/header.php';?>
+<section class="page-head"><div><div class="eyebrow">SYSTEM CONTROL / ADMIN ONLY</div><h1>ADMIN <span>OVERVIEW.</span></h1><p class="muted">Ringkasan sistem FIGHTVERSE.</p></div></section><div class="stats-grid"><div class="stat-card"><small>REGISTERED USERS</small><strong><?= $users ?></strong></div><div class="stat-card"><small>RECORDED MATCHES</small><strong><?= $matches ?></strong></div><div class="stat-card"><small>ACTIVE FIGHTERS</small><strong><?= $chars ?></strong></div><div class="stat-card"><small>YOUR ROLE</small><strong>ADMIN</strong></div></div><section class="panel"><h2>QUICK ADMIN NOTES</h2><p class="muted">Manajemen pengguna dan statistik ditampilkan read-only pada starter ini. Untuk tindakan administratif, tambahkan endpoint POST terproteksi CSRF dan audit log sebelum membuka fitur mutasi.</p><a class="button ghost" href="../leaderboard.php">VIEW LEADERBOARD ↗</a></section>
+<?php include __DIR__.'/../includes/footer.php';?>
